@@ -35,6 +35,7 @@ async function migrate() {
         subscription_status VARCHAR,
         is_online BOOLEAN DEFAULT false,
         last_seen TIMESTAMP DEFAULT NOW(),
+        show_online_status BOOLEAN DEFAULT true,
         created_at TIMESTAMP DEFAULT NOW(),
         updated_at TIMESTAMP DEFAULT NOW()
       );
@@ -101,6 +102,7 @@ async function migrate() {
 
       ALTER TABLE users ADD COLUMN IF NOT EXISTS is_online BOOLEAN DEFAULT false;
       ALTER TABLE users ADD COLUMN IF NOT EXISTS last_seen TIMESTAMP DEFAULT NOW();
+      ALTER TABLE users ADD COLUMN IF NOT EXISTS show_online_status BOOLEAN DEFAULT true;
     `);
     
     console.log('✅ All tables created successfully!');
