@@ -1,16 +1,12 @@
 import { drizzle } from 'drizzle-orm/node-postgres';
 import pg from 'pg';
 import { sql } from 'drizzle-orm';
-
 const { Pool } = pg;
-
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
   ssl: { rejectUnauthorized: false }
 });
-
 const db = drizzle(pool);
-
 async function migrate() {
   console.log('🔄 Creating database tables...');
   
@@ -37,6 +33,8 @@ async function migrate() {
         stripe_customer_id VARCHAR,
         stripe_subscription_id VARCHAR,
         subscription_status VARCHAR,
+        is_online BOOLEAN DEFAULT false,
+        last_seen TIMESTAMP DEFAULT NOW(),
         created_at TIMESTAMP DEFAULT NOW(),
         updated_at TIMESTAMP DEFAULT NOW()
       );
@@ -100,6 +98,9 @@ async function migrate() {
         status VARCHAR NOT NULL DEFAULT 'completed',
         created_at TIMESTAMP DEFAULT NOW()
       );
+
+      ALTER TABLE users ADD COLUMN IF NOT EXISTS is_online BOOLEAN DEFAULT false;
+      ALTER TABLE users ADD COLUMN IF NOT EXISTS last_seen TIMESTAMP DEFAULT NOW();
     `);
     
     console.log('✅ All tables created successfully!');
@@ -110,5 +111,4 @@ async function migrate() {
     await pool.end();
   }
 }
-
 migrate();
